@@ -1,6 +1,6 @@
 @module("./Comment.module.css") external styles: {..} = "default"
 @react.component
-let make = () => {
+let make = (~content) => {
   <div className={styles["comment"]}>
     <Avatar hasBorder={false} src="https://github.com/vinibispo.png" />
     <div className={styles["commentBox"]}>
@@ -16,7 +16,7 @@ let make = () => {
             <PhosphorReact.Trash size={#number(24)->PhosphorReact.size} />
           </button>
         </header>
-        <p> {"Muito bom Devon, parabéns!! 👏👏"->React.string} </p>
+        <p> {content->React.string} </p>
       </div>
       <footer>
         <button>
