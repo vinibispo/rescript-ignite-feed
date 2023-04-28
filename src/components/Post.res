@@ -43,8 +43,14 @@ let make = (~author, ~content, ~publishedAt: publishedAt) => {
 
   let handleChangeNewTextAreaText = e => {
     let targetElement = e->ReactEvent.Synthetic.target
+    targetElement["setCustomValidity"](. "")->ignore
     let value = targetElement["value"]
     setNewCommentText(_ => value)
+  }
+
+  let handleNewCommentInvalid = (e) => {
+    let targetElement = e->ReactEvent.Synthetic.target
+    targetElement["setCustomValidity"](. "Esse campo é obrigatório")
   }
 
   let deleteComment = (comment) => {
@@ -84,6 +90,8 @@ let make = (~author, ~content, ~publishedAt: publishedAt) => {
         placeholder="Deixe um comentário"
         value={newCommentText}
         onChange={handleChangeNewTextAreaText}
+        onInvalid={handleNewCommentInvalid}
+        required={true}
       />
       <footer>
         <button type_="submit"> {"Publicar"->React.string} </button>
