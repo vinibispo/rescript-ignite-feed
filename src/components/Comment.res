@@ -1,6 +1,9 @@
 @module("./Comment.module.css") external styles: {..} = "default"
 @react.component
-let make = (~content) => {
+let make = (~content, ~onDeleteComment) => {
+  let handleDeleteComment = () => {
+    onDeleteComment(content)
+  }
   <div className={styles["comment"]}>
     <Avatar hasBorder={false} src="https://github.com/vinibispo.png" />
     <div className={styles["commentBox"]}>
@@ -12,7 +15,7 @@ let make = (~content) => {
               {"Cerca de 1h atrás"->React.string}
             </time>
           </div>
-          <button title="Deletar comentário">
+          <button onClick={_ => handleDeleteComment()} title="Deletar comentário">
             <PhosphorReact.Trash size={#number(24)->PhosphorReact.size} />
           </button>
         </header>

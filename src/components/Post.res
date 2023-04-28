@@ -47,6 +47,10 @@ let make = (~author, ~content, ~publishedAt: publishedAt) => {
     setNewCommentText(_ => value)
   }
 
+  let deleteComment = (comment) => {
+    setComments(comments => comments->Js.Array2.filter(c => c != comment))
+  }
+
   <article className={styles["post"]}>
     <header>
       <div className={styles["author"]}>
@@ -87,7 +91,7 @@ let make = (~author, ~content, ~publishedAt: publishedAt) => {
     </form>
     <div className={styles["commentList"]}>
       {comments
-      ->Belt.Array.map(comment => <Comment key={comment} content={comment} />)
+      ->Belt.Array.map(comment => <Comment onDeleteComment={deleteComment} key={comment} content={comment} />)
       ->React.array}
     </div>
   </article>
