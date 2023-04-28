@@ -65,16 +65,14 @@ let make = () => {
     <div className={styles["wrapper"]}>
       <Sidebar />
       <main>
-        {posts
-        ->Belt.Array.map(post =>
+        {posts->Render.map((post, _) =>
           <Post
             key={post.id->Belt.Int.toString}
             author={post.author}
             content={post.content}
             publishedAt={post.publishedAt}
           />
-        )
-        ->React.array}
+        )}
       </main>
     </div>
   </React.Fragment>

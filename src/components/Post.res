@@ -73,8 +73,7 @@ let make = (~author, ~content, ~publishedAt: publishedAt) => {
       </time>
     </header>
     <div className={styles["content"]}>
-      {content
-      ->Belt.Array.map(c => {
+      {content->Render.map((c, _) => {
         switch c {
         | {type_: "link", content: value} =>
           <p key={value}>
@@ -82,8 +81,7 @@ let make = (~author, ~content, ~publishedAt: publishedAt) => {
           </p>
         | {type_: _, content: value} => <p key={value}> {value->React.string} </p>
         }
-      })
-      ->React.array}
+      })}
     </div>
     <form className={styles["commentForm"]} onSubmit={handleCreateNewComment}>
       <strong> {"Deixe seu feedback"->React.string} </strong>
@@ -100,11 +98,9 @@ let make = (~author, ~content, ~publishedAt: publishedAt) => {
       </footer>
     </form>
     <div className={styles["commentList"]}>
-      {comments
-      ->Belt.Array.map(comment =>
+      {comments->Render.map((comment, _) =>
         <Comment onDeleteComment={deleteComment} key={comment} content={comment} />
-      )
-      ->React.array}
+      )}
     </div>
   </article>
 }
