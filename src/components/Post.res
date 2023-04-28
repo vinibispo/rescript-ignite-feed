@@ -30,15 +30,21 @@ let make = (~author, ~content, ~publishedAt: publishedAt) => {
     },
   )
 
-
   let (comments, setComments) = React.useState(_ => ["Comentário 1", "Comentário 2"])
+
+  let (newCommentText, setNewCommentText) = React.useState(_ => "")
 
   let handleCreateNewComment = e => {
     ReactEvent.Synthetic.preventDefault(e)
-    let targetElement = (e->ReactEvent.Form.target)["comment"]
+
+    setComments(comments => comments->Belt.Array.concat([newCommentText]))
+    setNewCommentText(_ => "")
+  }
+
+  let handleChangeNewTextAreaText = e => {
+    let targetElement = e->ReactEvent.Synthetic.target
     let value = targetElement["value"]
-    setComments(comments => comments->Belt.Array.concat([value]) )
-    targetElement["value"] = ""
+    setNewCommentText(_ => value)
   }
 
   <article className={styles["post"]}>
@@ -56,22 +62,25 @@ let make = (~author, ~content, ~publishedAt: publishedAt) => {
     </header>
     <div className={styles["content"]}>
       {content
-      ->Belt.Array.mapWithIndex((i, c) => {
-        <React.Fragment key={i->Belt.Int.toString}>
-          {switch c {
-          | {type_: "link", content: value} =>
-            <p>
-              <a href=""> {value->React.string} </a>
-            </p>
-          | _ => <p> {c.content->React.string} </p>
-          }}
-        </React.Fragment>
+      ->Belt.Array.map(c => {
+        switch c {
+        | {type_: "link", content: value} =>
+          <p key={value}>
+            <a href=""> {value->React.string} </a>
+          </p>
+        | {type_: _, content: value} => <p key={value}> {value->React.string} </p>
+        }
       })
       ->React.array}
     </div>
     <form className={styles["commentForm"]} onSubmit={handleCreateNewComment}>
       <strong> {"Deixe seu feedback"->React.string} </strong>
-      <textarea name="comment" placeholder="Deixe um comentário" />
+      <textarea
+        name="comment"
+        placeholder="Deixe um comentário"
+        value={newCommentText}
+        onChange={handleChangeNewTextAreaText}
+      />
       <footer>
         <button type_="submit"> {"Publicar"->React.string} </button>
       </footer>
