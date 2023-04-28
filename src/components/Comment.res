@@ -4,6 +4,11 @@ let make = (~content, ~onDeleteComment) => {
   let handleDeleteComment = () => {
     onDeleteComment(content)
   }
+
+  let (likeCount, setLikeCount) = React.useState(_ => 0)
+  let handleLikeComment = _ => {
+    setLikeCount(like => like + 1)
+  }
   <div className={styles["comment"]}>
     <Avatar hasBorder={false} src="https://github.com/vinibispo.png" />
     <div className={styles["commentBox"]}>
@@ -22,10 +27,10 @@ let make = (~content, ~onDeleteComment) => {
         <p> {content->React.string} </p>
       </div>
       <footer>
-        <button>
+        <button onClick={handleLikeComment}>
           <PhosphorReact.ThumbsUp />
           {"Aplaudir"->React.string}
-          <span> {20->React.int} </span>
+          <span> {likeCount->React.int} </span>
         </button>
       </footer>
     </div>
