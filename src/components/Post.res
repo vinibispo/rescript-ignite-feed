@@ -48,14 +48,16 @@ let make = (~author, ~content, ~publishedAt: publishedAt) => {
     setNewCommentText(_ => value)
   }
 
-  let handleNewCommentInvalid = (e) => {
+  let handleNewCommentInvalid = e => {
     let targetElement = e->ReactEvent.Synthetic.target
     targetElement["setCustomValidity"](. "Esse campo é obrigatório")
   }
 
-  let deleteComment = (comment) => {
+  let deleteComment = comment => {
     setComments(comments => comments->Js.Array2.filter(c => c != comment))
   }
+
+  let isNewCommentEmpty = newCommentText->String.length == 0
 
   <article className={styles["post"]}>
     <header>
@@ -94,12 +96,14 @@ let make = (~author, ~content, ~publishedAt: publishedAt) => {
         required={true}
       />
       <footer>
-        <button type_="submit"> {"Publicar"->React.string} </button>
+        <button type_="submit" disabled={isNewCommentEmpty}> {"Publicar"->React.string} </button>
       </footer>
     </form>
     <div className={styles["commentList"]}>
       {comments
-      ->Belt.Array.map(comment => <Comment onDeleteComment={deleteComment} key={comment} content={comment} />)
+      ->Belt.Array.map(comment =>
+        <Comment onDeleteComment={deleteComment} key={comment} content={comment} />
+      )
       ->React.array}
     </div>
   </article>
