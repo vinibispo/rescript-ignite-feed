@@ -2,7 +2,6 @@ let str = React.string
 %%raw("import './global.css'")
 @module("./App.module.css") external styles: {..} = "default"
 
-
 type post = {
   id: int,
   author: Post.author,
@@ -69,7 +68,10 @@ let make = () => {
         {posts
         ->Belt.Array.map(post =>
           <Post
-            key={post.id->Belt.Int.toString} author={post.author} content={post.content} publishedAt={post.publishedAt}
+            key={post.id->Belt.Int.toString}
+            author={post.author}
+            content={post.content}
+            publishedAt={post.publishedAt}
           />
         )
         ->React.array}

@@ -18,12 +18,13 @@ type contents = array<content>
 
 @react.component
 let make = (~author, ~content, ~publishedAt: publishedAt) => {
-  let publishedDateFormatted = RescriptCore.Intl.DateTimeFormat.makeWithLocaleAndOptions("pt-BR", {
-      "day": "2-digit",
-      "month": "long",
-      "hour": "2-digit",
-      "minute": "2-digit"
-    } )->RescriptCore.Intl.DateTimeFormat.format(publishedAt)
+  let publishedDateFormatted = DateFns.format(~date=publishedAt, ~patterns="d 'de' LLLL 'às' HH:mm'h'", ~options={locale: DateFns.ptBR})
+
+  let publishedDateRelativeToNow = DateFns.formatDistanceToNow(publishedAt, {
+      locale: DateFns.ptBR,
+      addSuffix: true
+    })
+
   <article className={styles["post"]}>
     <header>
       <div className={styles["author"]}>
@@ -33,16 +34,20 @@ let make = (~author, ~content, ~publishedAt: publishedAt) => {
           <span> {author.role->React.string} </span>
         </div>
       </div>
-      <time title="27 de abril de 2023 às 18:18h" dateTime={"2023-04-27 18:18:00"}>
-        {publishedDateFormatted->React.string}
+      <time title={publishedDateFormatted} dateTime={publishedAt->Js.Date.toISOString}>
+        {publishedDateRelativeToNow->React.string}
       </time>
     </header>
     <div className={styles["content"]}>
-      {content->Belt.Array.map(c => {
-          switch c {
-          | {type_: "link", content: value} => <a href="">{value->React.string}</a>;
-          | _ => <p>{c.content->React.string}</p>
-          }
+      {content->Belt.Array.mapWithIndex((i, c) => {
+          <React.Fragment key={i->Belt.Int.toString}>
+            {
+              switch c {
+              | {type_: "link", content: value} => <p><a href="">{value->React.string}</a></p>;
+              | _ => <p>{c.content->React.string}</p>
+              }
+            }
+          </React.Fragment>
         })->React.array}
     </div>
     <form className={styles["commentForm"]}>
