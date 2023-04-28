@@ -1,0 +1,32 @@
+{
+  "name": "01-fundamentos-reactjs",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run rescript:build && vite build",
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "rescript:dev": "npm run rescript:build -w",
+    "rescript:build": "rescript build"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "^2.0.9",
+    "@rescript/core": "^0.3.0",
+    "@rescript/react": "^0.11.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@vitejs/plugin-react": "^4.0.0-beta.0",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.3.4",
+    "rescript": "^10.1.4",
+    "vite": "^4.3.0"
+  }
+}

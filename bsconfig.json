@@ -1,0 +1,24 @@
+{
+  "name": "01-fundamentos-reactjs",
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    }
+  ],
+  "jsx": {
+    "version": 4,
+    "mode": "automatic"
+  },
+  "package-specs": [
+    {
+      "module": "es6",
+      "in-source": true
+    }
+  ],
+  "suffix": ".bs.js",
+  "bs-dependencies": [
+    "@rescript/react",
+    "@rescript/core"
+  ]
+}
