@@ -11,10 +11,19 @@ type content = {
   content: string,
 }
 
+type comment = {
+  body: string,
+  id: int,
+  postId: int,
+}
+
 type contents = array<content>
 
+let fetchComments = (id): Js.Promise.t<array<comment>> =>
+  Fetch.fetch(`http://localhost:3333/comments?postId=${id}`, {})->Js.Promise2.then(Fetch.json)
+
 @react.component
-let make = (~author, ~content, ~publishedAt) => {
+let make = (~author, ~content, ~publishedAt, ~id) => {
   let publishedAtDate = publishedAt->Js.Date.fromString
   let publishedDateFormatted = DateFns.format(
     ~date=publishedAtDate,
@@ -30,14 +39,18 @@ let make = (~author, ~content, ~publishedAt) => {
     },
   )
 
-  let (comments, setComments) = React.useState(_ => ["Comentário 1", "Comentário 2"])
+  let queryResult = ReactQuery.useQuery({
+    queryKey: ["comments" ++ id->string_of_int],
+    queryFn: _ => fetchComments(id->string_of_int),
+    refetchOnWindowFocus: ReactQuery.refetchOnWindowFocus(#bool(false)),
+  })
 
   let (newCommentText, setNewCommentText) = React.useState(_ => "")
 
   let handleCreateNewComment = e => {
     ReactEvent.Synthetic.preventDefault(e)
 
-    setComments(comments => comments->Belt.Array.concat([newCommentText]))
+    /* setComments(comments => comments->Belt.Array.concat([newCommentText])) */
     setNewCommentText(_ => "")
   }
 
@@ -54,7 +67,8 @@ let make = (~author, ~content, ~publishedAt) => {
   }
 
   let deleteComment = comment => {
-    setComments(comments => comments->Js.Array2.filter(c => c != comment))
+    comment->Js.log
+    /* setComments(comments => comments->Js.Array2.filter(c => c != comment)) */
   }
 
   let isNewCommentEmpty = newCommentText->String.length == 0
@@ -98,9 +112,18 @@ let make = (~author, ~content, ~publishedAt) => {
       </footer>
     </form>
     <div className={styles["commentList"]}>
-      {comments->Render.map((comment, _) =>
-        <Comment onDeleteComment={deleteComment} key={comment} content={comment} />
-      )}
+      {switch queryResult {
+      | {isLoading: true} => "Loading"->React.string
+      | {isLoading: false, isError: false, data: Some(comments)} =>
+        comments->Render.map((comment, _) =>
+          <Comment
+            onDeleteComment={deleteComment}
+            key={comment.id->Belt.Int.toString}
+            content={comment.body}
+          />
+        )
+      | _ => "Error"->React.string
+      }}
     </div>
   </article>
 }

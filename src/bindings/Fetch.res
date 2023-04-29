@@ -1,38 +1,38 @@
 type response
 type fetchOptions = {
   method?: [
-  | #GET
-  | #POST
-  | #PUT
-  | #DELETE
-  | #HEAD
-  | #OPTIONS
-  | #PATCH
+    | #GET
+    | #POST
+    | #PUT
+    | #DELETE
+    | #HEAD
+    | #OPTIONS
+    | #PATCH
   ],
   headers?: Js.Dict.t<string>,
   body?: string,
   mode?: [
-  | #cors
-  | #"no-cors"
-  | #"same-origin"
+    | #cors
+    | #"no-cors"
+    | #"same-origin"
   ],
   credentials?: [
-  | #omit
-  | #"same-origin"
-  | #"include"
+    | #omit
+    | #"same-origin"
+    | #"include"
   ],
   cache?: [
-  | #default
-  | #"no-store"
-  | #reload
-  | #"no-cache"
-  | #"force-cache"
-  | #"only-if-cached"
+    | #default
+    | #"no-store"
+    | #reload
+    | #"no-cache"
+    | #"force-cache"
+    | #"only-if-cached"
   ],
   redirect?: [
-  | #follow
-  | #error
-  | #manual
+    | #follow
+    | #error
+    | #manual
   ],
   signal?: AbortSignal.t,
 }

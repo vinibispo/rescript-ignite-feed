@@ -21,6 +21,7 @@ let make = () => {
     | {data: Some(posts), isLoading: false, isError: false} =>
       posts->Render.map((post, _) =>
         <Post
+          id={post.id}
           key={post.id->Belt.Int.toString}
           author={post.author}
           content={post.content}
