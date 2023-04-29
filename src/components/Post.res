@@ -11,19 +11,19 @@ type content = {
   content: string,
 }
 
-type publishedAt = Js.Date.t
 type contents = array<content>
 
 @react.component
-let make = (~author, ~content, ~publishedAt: publishedAt) => {
+let make = (~author, ~content, ~publishedAt) => {
+  let publishedAtDate = publishedAt->Js.Date.fromString
   let publishedDateFormatted = DateFns.format(
-    ~date=publishedAt,
+    ~date=publishedAtDate,
     ~patterns="d 'de' LLLL 'às' HH:mm'h'",
     ~options={locale: DateFns.ptBR},
   )
 
   let publishedDateRelativeToNow = DateFns.formatDistanceToNow(
-    publishedAt,
+    publishedAtDate,
     {
       locale: DateFns.ptBR,
       addSuffix: true,
@@ -68,7 +68,7 @@ let make = (~author, ~content, ~publishedAt: publishedAt) => {
           <span> {author.role->React.string} </span>
         </div>
       </div>
-      <time title={publishedDateFormatted} dateTime={publishedAt->Js.Date.toISOString}>
+      <time title={publishedDateFormatted} dateTime={publishedAtDate->Js.Date.toISOString}>
         {publishedDateRelativeToNow->React.string}
       </time>
     </header>

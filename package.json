@@ -9,11 +9,14 @@
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "rescript:dev": "npm run rescript:build -w",
-    "rescript:build": "rescript build"
+    "rescript:build": "rescript build",
+    "json-server": "npx json-server --watch server.json --port 3333"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.0.9",
     "@rescript/react": "^0.11.0",
+    "@rescriptbr/react-query": "^1.0.0",
+    "@tanstack/react-query": "^4.29.5",
     "date-fns": "^2.29.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
