@@ -50,11 +50,18 @@
   "comments": [
     {
       "id": 1,
-      "body": "some comment",
+      "body": "First Comment",
       "postId": 1
+    },
+    {
+      "id": 2,
+      "body": "Second Comment",
+      "postId": 1
+    },
+    {
+      "id": 3,
+      "body": "Third Comment",
+      "postId": 2
     }
-  ],
-  "profile": {
-    "name": "typicode"
-  }
+  ]
 }
