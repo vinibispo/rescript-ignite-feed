@@ -8,7 +8,7 @@
 
 Clone the project and access the folder:
 ```bash
-$ git clone https://github.com/vinibispo/rescript-fundamentos-reactjs && cd rescript-fundamentos-reactjs
+$ git clone https://github.com/vinibispo/rescript-ignite-feed && cd rescript-ignite-feed
 ```
 
 Follow the steps below:
