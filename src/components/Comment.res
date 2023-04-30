@@ -1,8 +1,8 @@
 @module("./Comment.module.css") external styles: {..} = "default"
 @react.component
-let make = (~content, ~onDeleteComment) => {
+let make = (~content, ~onDeleteComment, ~id) => {
   let handleDeleteComment = () => {
-    onDeleteComment(content)
+    onDeleteComment(id)
   }
 
   let (likeCount, setLikeCount) = React.useState(_ => 0)

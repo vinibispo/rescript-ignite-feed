@@ -19,8 +19,42 @@ type comment = {
 
 type contents = array<content>
 
-let fetchComments = (id): Js.Promise.t<array<comment>> =>
-  Fetch.fetch(`http://localhost:3333/comments?postId=${id}`, {})->Js.Promise2.then(Fetch.json)
+type commentData = {
+  text: string,
+  id: int,
+}
+
+let fetchComments = (id): Js.Promise.t<array<comment>> => {
+  let headers = Js.Dict.fromList(list{("Content-Type", "application/json")})
+
+  Fetch.fetch(`http://localhost:3333/comments?postId=${id}`, { headers: headers })->Js.Promise2.then(Fetch.json)
+}
+
+let addComments = (~id, ~text) => {
+  let headers = Js.Dict.fromList(list{("Content-Type", "application/json")})
+  let body = {"body": text, "postId": id}->Js.Json.stringifyAny
+  switch body {
+  | Some(body) =>
+    Fetch.fetch(
+      `http://localhost:3333/comments`,
+      {
+        method: #POST,
+        body,
+        headers,
+      },
+    )->Js.Promise2.then(Fetch.json)
+  | None => Js.Promise2.reject(Js.Exn.raiseError("Error converting json"))
+  }
+}
+
+let removeComment = id => {
+  Fetch.fetch(
+    `http://localhost:3333/comments/${id->string_of_int}`,
+    {
+      method: #DELETE,
+    },
+  )->Js.Promise2.then(Fetch.json)
+}
 
 @react.component
 let make = (~author, ~content, ~publishedAt, ~id) => {
@@ -40,17 +74,50 @@ let make = (~author, ~content, ~publishedAt, ~id) => {
   )
 
   let queryResult = ReactQuery.useQuery({
-    queryKey: ["comments" ++ id->string_of_int],
+    queryKey: ["comments", id->string_of_int],
     queryFn: _ => fetchComments(id->string_of_int),
     refetchOnWindowFocus: ReactQuery.refetchOnWindowFocus(#bool(false)),
   })
 
   let (newCommentText, setNewCommentText) = React.useState(_ => "")
 
+  let {mutate: mutateAdd} = ReactQuery.useMutation(
+    ReactQuery.mutationOptions(
+      ~mutationKey=["comments", id->string_of_int],
+      ~mutationFn=mutateData => {
+        let {id, text} = mutateData
+        addComments(~id, ~text)
+      },
+      ~onSuccess=(_, _variables, _context) => {
+        queryResult.refetch({
+          throwOnError: true,
+          cancelRefetch: false,
+        })
+      },
+      (),
+    ),
+  )
+
+  let {mutate: mutateRemove} = ReactQuery.useMutation(
+    ReactQuery.mutationOptions(
+      ~mutationKey=["comments", id->string_of_int],
+      ~mutationFn=id => {
+        removeComment(id)
+      },
+      ~onSuccess=(_, _variables, _context) => {
+        queryResult.refetch({
+          throwOnError: true,
+          cancelRefetch: false,
+        })
+      },
+      (),
+    ),
+  )
+
   let handleCreateNewComment = e => {
     ReactEvent.Synthetic.preventDefault(e)
+    mutateAdd(. {id, text: newCommentText}, None)
 
-    /* setComments(comments => comments->Belt.Array.concat([newCommentText])) */
     setNewCommentText(_ => "")
   }
 
@@ -66,9 +133,8 @@ let make = (~author, ~content, ~publishedAt, ~id) => {
     targetElement["setCustomValidity"](. "Esse campo é obrigatório")
   }
 
-  let deleteComment = comment => {
-    comment->Js.log
-    /* setComments(comments => comments->Js.Array2.filter(c => c != comment)) */
+  let deleteComment = id => {
+    mutateRemove(. id, None)
   }
 
   let isNewCommentEmpty = newCommentText->String.length == 0
@@ -115,11 +181,12 @@ let make = (~author, ~content, ~publishedAt, ~id) => {
       {switch queryResult {
       | {isLoading: true} => "Loading"->React.string
       | {isLoading: false, isError: false, data: Some(comments)} =>
-        comments->Render.map((comment, _) =>
+        comments->Render.map(({id, body}, _) =>
           <Comment
             onDeleteComment={deleteComment}
-            key={comment.id->Belt.Int.toString}
-            content={comment.body}
+            key={id->Belt.Int.toString}
+            content={body}
+            id={id}
           />
         )
       | _ => "Error"->React.string
