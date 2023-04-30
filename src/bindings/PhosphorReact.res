@@ -13,6 +13,7 @@ type props = {
   weight?: weight,
   mirrored?: bool,
   alt?: string,
+  onClick?: ReactEvent.Mouse.t => unit,
 }
 let size = s =>
   switch s {
@@ -29,4 +30,8 @@ module Trash = {
 
 module ThumbsUp = {
   @module("@phosphor-icons/react") external make: React.component<props> = "ThumbsUp"
+}
+
+module X = {
+  @module("@phosphor-icons/react") external make: React.component<props> = "X"
 }

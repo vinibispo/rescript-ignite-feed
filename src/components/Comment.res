@@ -5,6 +5,15 @@ let make = (~content, ~onDeleteComment, ~id) => {
     onDeleteComment(id)
   }
 
+  let (openModal, setOpenModal) = React.useState(_ => false)
+
+  let handleOpenModal = () => {
+    setOpenModal(_ => true)
+  }
+  let handleCloseModal = () => {
+    setOpenModal(_ => false)
+  }
+
   let (likeCount, setLikeCount) = React.useState(_ => 0)
   let handleLikeComment = _ => {
     setLikeCount(like => like + 1)
@@ -20,9 +29,14 @@ let make = (~content, ~onDeleteComment, ~id) => {
               {"Cerca de 1h atrás"->React.string}
             </time>
           </div>
-          <button onClick={_ => handleDeleteComment()} title="Deletar comentário">
+          <button onClick={_ => handleOpenModal()} title="Deletar comentário">
             <PhosphorReact.Trash size={#number(24)->PhosphorReact.size} />
           </button>
+          <Modal
+            isOpen={openModal}
+            onClose={_ => handleCloseModal()}
+            onDeleteComment={_ => handleDeleteComment()}
+          />
         </header>
         <p> {content->React.string} </p>
       </div>
