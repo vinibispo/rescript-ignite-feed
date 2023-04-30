@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run rescript:build && vite build",
+    "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "rescript:dev": "npm run rescript:build -w",
-    "rescript:build": "rescript build",
+    "rescript:dev": "npm run rescript build -w",
+    "rescript:build": "rescript build -with-deps",
     "json-server": "npx json-server --watch server.json --port 3333"
   },
   "dependencies": {
